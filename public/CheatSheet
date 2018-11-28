@@ -14,3 +14,15 @@ look for <main role="main" class="container"> in page source
   <h1>Hello World</h1>
 </main>
 7.get the Starter Code.zip and copy the Services folder in the project src folder
+8.create Movies component and test render with console log:
+import React, { Component } from "react";
+import { getMovies } from "../services/fakeMovieService";
+
+class Movies extends Component {
+  state = { movies: getMovies() };
+  render() {
+    return <h2>Movies Component</h2>;
+  }
+}
+
+export default Movies;
