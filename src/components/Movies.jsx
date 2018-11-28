@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
-import { deleteMovie } from "../services/fakeMovieService";
 
 class Movies extends Component {
   state = { movies: getMovies() };
 
   handleDelete = movie => {
-    // console.log("deleting", movie);
-
-    deleteMovie(movie);
+    const movies = this.state.movies.filter(m => m._id !== movie._id);
+    this.setState({ movies });
   };
 
   render() {
@@ -34,7 +32,7 @@ class Movies extends Component {
                 <button
                   className="btn btn-danger btn-sm"
                   onClick={() => {
-                    this.handleDelete(m._id);
+                    this.handleDelete(m);
                   }}
                 >
                   Delete
