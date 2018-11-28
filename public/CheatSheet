@@ -1,0 +1,16 @@
+1.in terminal, run create-react-app vidly
+2.cd in vidly to install bootstrap and font-awesome:
+npm i bootstrap@4.1.1 font-awesome@4.7.0
+3.import css files for bootstrap and font-awesome in index.js:
+import "bootstrap/dist/css/bootstrap.css";
+import "font-awesome/css/font-awesome.css";
+4.in the project folder, start the project:
+npm start
+5.replace the default react app with basic bootstrap template.
+go to getbootstrap.com > examples > framework > starter template
+look for <main role="main" class="container"> in page source
+6.in App.js, delete everything in the return of the render() and replace with:
+<main className="container">
+  <h1>Hello World</h1>
+</main>
+7.get the Starter Code.zip and copy the Services folder in the project src folder
