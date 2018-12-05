@@ -111,3 +111,124 @@ handleDelete = movie => {
   const movies = this.state.movies.filter(m => m._id !== movie._id);
   this.setState({ movies });
 };
+20.create a common folder inside the components folder
+21.create a Like.jsx file inside the common folder
+22.copy font awesome markup for empty heart icon and paste it into render() of <Like/>
+don't forget to chege class to className -fontawesome was npm installed in the packages
+(https://fontawesome.com/v4.7.0/icon/heart-o):
+import React, { Component } from "react";
+
+// input: liked boolean
+// output: onClick
+
+class Like extends Component {
+  state = {};
+  render() {
+    return <i className="fa fa-heart-o" aria-hidden="true" />;
+  }
+}
+
+export default Like;
+22.in Movies.jsx, add a new column <th/> with a <Like/> inside before the delete <th>:
+<table className="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Genre</th>
+      <th>Stock</th>
+      <th>Rate</th>
+      <th />
+      <th />
+    </tr>
+  </thead>
+  <tbody>
+    {this.state.movies.map(m => (
+      <tr key={m._id}>
+        <td>{m.title}</td>
+        <td>{m.genre.name}</td>
+        <td>{m.numberInStock}</td>
+        <td>{m.dailyRentalRate}</td>
+        <td>
+          <Like />
+        </td>
+        <td>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => {
+              this.handleDelete(m);
+            }}
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+23.create a liked prop inside the <Like/> component of the table and set it to true:
+<Like liked={true} />
+24.modify the <Like/> render() to change the className if liked props 
+is true (className="fa fa-heart") or false (className="fa fa-heart-o"):
+class Like extends Component {
+  state = {};
+  render() {
+    let classes = "fa fa-heart";
+    return (
+      <i
+        className={this.props.liked ? classes : `${classes}-o`}
+        aria-hidden="true"
+      />
+    );
+  }
+}
+25.in Movies.jsx, change the hard coded liked props to be dynamically set to each movie liked value:
+<Like liked={m.liked} />
+26.in fakeMovieService, add a liked property to the first movie and set it to true then save to confirm
+27.set the onClick prop of <i/> in Like.jsx to props.handleLiked and add inline style for hand pointer:
+return (
+  <i
+    className={this.props.liked ? classes : `${classes}-o`}
+    aria-hidden="true"
+    onClick={this.props.handleLiked}
+    style={{ cursor: "pointer" }}
+  />
+);
+28.in Movies.jsx, create the handleLiked prop inside the <Like/> component, set it to this.handleLiked()
+and create the function handleLiked() to display a console.log('Liked'):
+handleLiked = () => {
+  console.log("Liked");
+}
+...
+<Like liked={m.liked} handleLiked={this.handleLiked} />
+29.change the handleLiked prop to an => function to pass the clicke movie to this.handleLiked:
+<Like liked={m.liked} handleLiked={() => this.handleLiked(m)} />
+30.change the handleLiked() to log which movie was clicked:
+handleLiked = movie => {
+  console.log("Liked", movie);
+};
+31.change the handleLiked() to copy the state, find the liked movie, toggle its liked property and updtae the state:
+handleLiked = movie => {
+  // 1. copy state
+  const movies = [...this.state.movies];
+  // 2. find movie index and update its liked property
+  const index = movies.indexOf(movie);
+  movies[index].liked = !movies[index].liked;
+  // 3. update state
+  this.setState({ movies });
+};
+32.Like.jsx can be changed to an sfc:
+import React from "react";
+
+const Like = props => {
+  let classes = "fa fa-heart";
+  return (
+    <i
+      className={props.liked ? classes : `${classes}-o`}
+      aria-hidden="true"
+      onClick={props.handleLiked}
+      style={{ cursor: "pointer" }}
+    />
+  );
+};
+
+export default Like;
