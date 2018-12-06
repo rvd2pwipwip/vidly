@@ -232,3 +232,68 @@ const Like = props => {
 };
 
 export default Like;
+33.create a new Pagination.jsx file inside common, then imr and sfc, 
+name the component Pagination and pass the props as an argument:
+import React from "react";
+
+const Pagination = props => {
+  return ();
+};
+
+export default Pagination;
+34.go to bootstrap documentation and find the markup for a pagination component
+(https://getbootstrap.com/docs/4.1/components/pagination/) to paste it in the return():
+import React from "react";
+
+const Pagination = props => {
+  return (
+    <nav aria-label="Page navigation example">
+      <ul className="pagination">
+        <li className="page-item">
+          <a className="page-link" href="#">
+            1
+          </a>
+        </li>
+      </ul>
+    </nav>
+  );
+};
+
+export default Pagination;
+35.in Movies.jsx, import then add the new <Pagination/> component below the table:
+import Pagination from "./common/Pagination";
+...
+<Pagination/>
+36.add pagination props to the component (# of items and page size):
+<Pagination itemsCount={this.state.movies.length} pageSize={this.state.pageSize} />
+37.initialize pageSize property in the state:
+state = { movies: getMovies(), pageSize: 4 };
+38.add handlePageChange prop to Pagination:
+<Pagination
+  itemsCount={this.state.movies.length}
+  pageSize={this.state.pageSize}
+  handlePageChange={this.handlePageChange}
+/>
+39.create the handlePageChange function of Movies to confirm with a log:
+handlePageChange = page => {
+  console.log(page);
+};
+40.in Pagination.jsx, create the itemsCount and PageSize const to determine the page count:
+const { itemsCount, pageSize } = props;
+const pagesCount = Math.ceil(itemsCount / pageSize);
+41.console cd in vidly and npm install lodash to use it to generate an array of the number of pages:
+npm i lodash@4.17.10
+42.import lodash in Pagination.jsx:
+import _ from "lodash";
+43.use lodash to create a pages array with keys [1, 2, 3]:
+const pages = _.range(1, pagesCount + 1);
+44.map the pages array to create a <li/> for each page:
+<ul className="pagination">
+  {pages.map(p => (
+    <li key={p} className="page-item">
+      <a className="page-link" href="#">
+        {p}
+      </a>
+    </li>
+  ))}
+</ul>
