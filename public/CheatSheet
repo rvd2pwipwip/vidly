@@ -368,5 +368,19 @@ const movies = paginate(movies, currentPage, pageSize);
 const { pageSize, currentPage, movies: allMovies } = this.state;
 ...
 const movies = paginate(allMovies, currentPage, pageSize);
+61.console cd in vidly and npm install prop-types in the project to allow type checking:
+npm i prop-types@15.6.2
+62.import prop-types in the Pagination component:
+import PropTypes from 'prop-types'
+63.add new propTypes property to Pagination below its definition:
+...
+};
 
+Pagination.propTypes = {
+  itemsCount: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  handlePageChange: PropTypes.func.isRequired,
+  currentPage: PropTypes.number.isRequired
+};
 
+export default Pagination;
