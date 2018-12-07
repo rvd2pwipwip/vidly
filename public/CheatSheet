@@ -297,3 +297,76 @@ const pages = _.range(1, pagesCount + 1);
     </li>
   ))}
 </ul>
+45.in Pagination.jsx raise the click event of the <a/> element:
+<a className="page-link" onClick={() => props.handlePageChange(p)}>{p}</a>
+46.keep using already created object destructuring for props.handlePageChange:
+const { itemsCount, pageSize, handlePageChange } = props;
+...
+<a className="page-link" onClick={() => handlePageChange(p)}>
+47.to highlight the current page on the <Pagination/> component, create a currentPage
+porperty in Movies.sate and pass it down to <Pagination/> then to <a/> via props:
+state = { movies: getMovies(), pageSize: 4, currentPage: 1 };
+...
+<Pagination
+  itemsCount={this.state.movies.length}
+  pageSize={this.state.pageSize}
+  handlePageChange={this.handlePageChange}
+  currentPage={this.state.currentPage}
+/>
+... in Pagination.jsx:
+const { itemsCount, pageSize, handlePageChange, currentPage } = props;
+48.refactor Movies.jsx state properties with object destructuring:
+render() {
+  const { length: count } = this.state.movies;
+  const { pageSize, currentPage } = this.state;
+...
+<p>Showing {count} movies in the database.</p>
+...
+<Pagination
+  itemsCount={count}
+  pageSize={pageSize}
+  currentPage={currentPage}
+  handlePageChange={this.handlePageChange}
+/>
+49.change code of handlePageChange() to update the state of Movies:
+handlePageChange = page => {
+  this.setState({ currentPage: page });
+};
+50.use ternary expression to append 'active' to the class of <li/> if it is the current page:
+<li
+  key={p}
+  className={currentPage === p ? "page-item active" : "page-item"}
+>
+  <a className="page-link" onClick={() => handlePageChange(p)}>
+    {p}
+  </a>
+</li>
+51.create a new utils folder inside src and add a new paginate.js file inside.
+52.import lodash in the paginate.js file:
+import _ from "lodash";
+53.export the paginate function that will be written in this file:
+export function paginate()
+54.add the parameters that will be neede to paginate:
+export function paginate(items, pageNumber, pageSize)
+55.calculate the starting index of items on current page:
+const startIndex = (pageNumber - 1) * pageSize;
+56.chain lodash methods to return new array of page items:
+return _(items)
+  .slice(startIndex)
+  .take(pageSize)
+  .value();
+57.import the paginate function in Movies.jsx:
+import { paginate } from "../utils/paginate";
+58.inside render(), call the paginate() and pass the state movies, currentPage and PageSize:
+const { pageSize, currentPage, movies } = this.state;
+...
+const movies = paginate(movies, currentPage, pageSize);
+59.instead of mapping this.state.movies, we need to map over the local (paged) movies:
+<tbody>
+  {movies.map(m => (
+60.remove duplicate declaration "movies" error by renaming movies in destructured declaration:
+const { pageSize, currentPage, movies: allMovies } = this.state;
+...
+const movies = paginate(allMovies, currentPage, pageSize);
+
+
