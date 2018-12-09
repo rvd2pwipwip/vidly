@@ -486,4 +486,32 @@ FilterGroup.defaultProps = {
   valueProperty: "_id",
   textProperty: "name"
 };
-
+82.in FilterGroup.jsx, deconstruct the handleItemSelect fucntion passed via props:
+const { items, textProperty, valueProperty, handleItemSelect } = props;
+83.add an onClick event to the <li/> elements of FilterGroup to call handleItemSelect and pass
+the clicked item (and add the style={{ cursor: "pointer" }} attribute):
+<li
+  key={i[valueProperty]}
+  className={"list-group-item"}
+  onClick={() => handleItemSelect(i)}
+  style={{ cursor: "pointer" }}
+>
+  {i[textProperty]}
+</li>
+84.in FilterGroup.jsx, write the handleGenreSelect to set the state to the clicked item:
+handleGenreSelect = genre => {
+  this.setState({ selectedGenre: genre });
+};
+85.in FilterGroup.jsx, extract the new prop (selectedItem):
+const { items, textProperty, valueProperty, handleItemSelect, selectedItem } = props;
+86.dynamically change the class of <li/> if its item is the same as the one that was clicked:
+<li
+  key={i[valueProperty]}
+  className={
+    i === selectedItem ? "list-group-item active" : "list-group-item"
+  }
+  onClick={() => handleItemSelect(i)}
+  style={{ cursor: "pointer" }}
+>
+  {i[textProperty]}
+</li>

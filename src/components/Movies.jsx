@@ -12,7 +12,7 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
-    currentFilter: null
+    selectedGenre: null
   };
 
   componentDidMount() {
@@ -39,7 +39,7 @@ class Movies extends Component {
   };
 
   handleGenreSelect = genre => {
-    console.log(genre);
+    this.setState({ selectedGenre: genre });
   };
 
   render() {
@@ -56,6 +56,7 @@ class Movies extends Component {
           <FilterGroup
             items={this.state.genres}
             handleItemSelect={this.handleGenreSelect}
+            selectedItem={this.state.selectedGenre}
           />
         </div>
         <div className="col">
