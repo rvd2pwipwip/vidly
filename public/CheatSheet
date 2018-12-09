@@ -384,3 +384,106 @@ Pagination.propTypes = {
 };
 
 export default Pagination;
+64.create a new FilterGroup.jsx file inside the common folder
+65.in FilterGroup.jsx, imr and sfc to write code for a stateless functional component named FilterGroup:
+import React from "react";
+
+const FilterGroup = props => {
+  return (  );
+};
+
+export default FilterGroup;
+66.in Movies.jsx, import the new FilterGroup component:
+import FilterGroup from "./common/FilterGroup";
+67.replace the React.Fragment <></> with a div with a className of row that has two col divs inside
+div.row>div.col-3+div.col:
+<div className="row">
+  <div className="col-3"></div>
+  <div className="col"></div>
+</div>
+68.put a <FilterGroup/> inside the first col and put all the rest in the second col:
+<div className="row">
+  <div className="col-3">
+    <FilterGroup/>
+  </div>
+  <div className="col">
+    <p>Showing {count} movies in the database.</p>
+    <table className="table">
+    ...
+69.import the genres list with getGenres() from fakeGenreService.js into Movies.jsx:
+import { getGenres } from "../services/fakeGenreService";
+70.add the genres property in the state and assign it an empty array:
+state = {
+  movies: getMovies(),
+  genres: [],
+  pageSize: 4,
+  currentPage: 1,
+  currentFilter: null
+};
+71.add a componentDidMount() below the state:
+componentDidMount(){
+  
+}
+72.assign an empty array to the movies of state:
+state = {
+  movies: [],
+  genres: [],
+  pageSize: 4,
+  currentPage: 1,
+  currentFilter: null
+};
+73.set the state movies and genres in the componentDidMount():
+componentDidMount() {
+  this.setState({ movies: getMovies(), genres: getGenres() });
+}
+74.pass the genres of state as an items prop of FilterGroup:
+<FilterGroup items={this.state.genres} />
+75.add an item selection event handler to FilterGroup:
+<FilterGroup
+  items={this.state.genres}
+  handleItemSelect={this.handleGenreSelect}
+/>
+76.add a handleGenreSelect() to Movies that will console log the passed genre:
+handleGenreSelect = genre => {
+  console.log(genre);
+}
+77.in FilterGroup.js, destructure the passed items props and map each of them to a <li/> elements
+of the list-group ul (https://getbootstrap.com/docs/4.1/components/list-group/):
+const FilterGroup = props => {
+  const { items } = props;
+
+  return (
+    <ul className="list-group">
+      {items.map(i => (
+        <li key={i._id} className={"list-group-item"}>
+          {i.name}
+        </li>
+      ))}
+    </ul>
+  );
+};
+78.to decouple the FilterGroup component from the data of Movies, add 2 new props to 
+<FilterGroup/> in Movies.jsx:
+<FilterGroup
+  items={this.state.genres}
+  textProperty="name"
+  valueProperty="_id"
+  handleItemSelect={this.handleGenreSelect}
+/>
+79.grab the 2 new props inside FilterGroup.jsx:
+const { items, textProperty, valueProperty } = props;
+80.replace . notation with [] notation to get the .name and the ._id of each <li/>:
+<ul className="list-group">
+  {items.map(i => (
+    <li key={i[valueProperty]} className={"list-group-item"}>
+      {i[textProperty]}
+    </li>
+  ))}
+</ul>
+81.in FilterGroup.jsx, use defaultProps to simplify the <FilterGroup/> in Movies.jsx 
+(no need to pass the defaultProps):
+FilterGroup.defaultProps = {
+  valueProperty: "_id",
+  textProperty: "name"
+};
+
