@@ -515,3 +515,35 @@ const { items, textProperty, valueProperty, handleItemSelect, selectedItem } = p
 >
   {i[textProperty]}
 </li>
+87.in Movies.jsx render method, extract the selectedGenre from the state 
+(along with other deconstructed state properties):
+88.filter the movies before pagination with ternary operator:
+const filteredMovies = selectedGenre
+  ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+  : allMovies;
+89.paginate filteredMovies instead of allMovies:
+const movies = paginate(filteredMovies, currentPage, pageSize);
+90.in the <Pagination/> component, assign the filteredMovies.length to itemsCount (instead of count):
+<Pagination
+  itemsCount={filteredMovies.length}
+  pageSize={pageSize}
+  currentPage={currentPage}
+  handlePageChange={this.handlePageChange}
+/>
+91.in the <p/>, change the { count } to { filteredMovies.length } to show the proper number of
+movies shown:
+<p>Showing {filteredMovies.length} movies in the database.</p>
+92.add All Genres in state genres array and set the state with this new array:
+componentDidMount() {
+  const genres = [{ _id: 0, name: "AllGenres" }, ...getGenres()];
+  this.setState({ movies: getMovies(), genres });
+}
+93.change the filter condition so it doesn't filter if the id of selectedGenre is 0
+const filteredMovies =
+  selectedGenre && selectedGenre !== 0
+    ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+    : allMovies;
+94.reset the current page to page 1 whenever a genre is selected:
+handleGenreSelect = genre => {
+  this.setState({ selectedGenre: genre, currentPage: 1 });
+};
