@@ -743,3 +743,227 @@ onSort = sort => {
 handleSort = sortColumn => {
   this.setState({ sortColumn });
 };
+111.create a new tableHeader.jsx cc file in the common folder:
+import React, { Component } from 'react';
+
+class TableHeader extends Component {
+  state = {  }
+  render() { 
+    return (  );
+  }
+}
+ 
+export default TableHeader;
+112.copy the sorting code from MoviesTable into TableHeader:
+class TableHeader extends Component {
+  state = {  }
+
+  onSort = sort => {
+    const sortColumn = { ...this.props.sortColumn };
+    if (sortColumn.sort === sort) {
+      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn.sort = sort;
+      sortColumn.order = "asc";
+    }
+    this.props.handleSort(sortColumn);
+  };
+
+  render() { 
+    return (  );
+  }
+}
+113.add render code to display a <thead> with a <tr> that has a <th> for each column:
+render() { 
+  return ( 
+    <thead>
+      <tr>
+        {this.props.columns.map(c => <th>{c.label}</th>)}
+      </tr>
+  </thead> );
+} 
+114.copy the first <th> onClick expression from MoviesTable in the <th> of TableHeader:
+<thead>
+  <tr>
+    {this.props.columns.map(c => (
+      <th onClick={() => this.onSort("title")}>{c.label}</th>
+    ))}
+  </tr>
+</thead>
+115.instead of "title", pass the path to the target property:
+<th onClick={() => this.onSort(c.path)}>{c.label}</th>
+116.import the new <TableHeader/> in MoviesTable.jsx:
+import TableHeader from "./common/TableHeader";
+...
+117.create a new columns array in MoviesTable:
+class MoviesTable extends Component {
+  columns = [
+    { path: "title", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    {}, //like col, no path no label
+    {} //delete col, no path no label
+  ]; //will not change, no need for a state
+118.replace the <thead/> by the new <TableHeader/> with the needed props:
+render() {
+  const {
+    movies,
+    handleDelete,
+    handleLiked,
+    handleSort,
+    sortColumn
+  } = this.props;
+  return (
+    <>
+      <table className="table">
+        <TableHeader
+          columns={this.columns}
+          sortColumn={sortColumn}
+          handleSort={handleSort}
+        />
+        <tbody>
+        ...
+119.add key attributes to the like and delete columns of MoviesTable:
+columns = [
+  { path: "title", label: "Title" },
+  { path: "genre.name", label: "Genre" },
+  { path: "numberInStock", label: "Stock" },
+  { path: "dailyRentalRate", label: "Rate" },
+  { key: "like" }, //like col, no path no label
+  { key: "delete" } //delete col, no path no label
+]; //will not change, no need for a state
+120.in TableHeader.jsx, add a key attribute to the <th/> assigned to either
+the column path or the column key (for like and delete):
+<tr>
+  {this.props.columns.map(c => (
+    <th key={c.path || c.key} onClick={() => this.onSort(c.path)}>
+      {c.label}
+    </th>
+  ))}
+</tr>
+121.create a new TableBody.jsx cc file in the common folder:
+import React, { Component } from 'react';
+
+class TableBody extends Component {
+  state = {  }
+  render() { 
+    return (  );
+  }
+}
+ 
+export default TableBody;
+122.in MoviesTable.jsx, import the new TableBody and insert it below the <TableHeader/>:
+import TableBody from "./common/TableBody";
+...
+<TableHeader
+  columns={this.columns}
+  sortColumn={sortColumn}
+  handleSort={handleSort}
+/>
+<TableBody/>
+...
+124.add a data attribute to <TableBody/> to pass the (decoupled) movies:
+<TableBody data={movies} />
+125.the <TableBody/> should return <tbody> elements:
+render() {
+    return (
+      <tbody>
+        <tr>
+          <td />
+        </tr>
+      </tbody>
+    );
+  }
+126.use object destructuring to extract the props data (movies) and the columns:
+render() {
+  const { data, columns } = this.props;
+  return (
+    <tbody>
+      {data.map(i => (
+        <tr>
+          {columns.map(c => (
+            <td />
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  );
+}
+127.import lodash to use the _.get() that can get nested properties (like genre.name):
+<tbody>
+  {data.map(i => (
+    <tr>
+      {columns.map(c => (
+        <td>{_.get(i, c.path)}</td>
+      ))}
+    </tr>
+  ))}
+</tbody>
+128.in the columns array of MoviesTable, pass the jsx markup for the like and the
+delete columns as content attributes:
+columns = [
+  { path: "title", label: "Title" },
+  { path: "genre.name", label: "Genre" },
+  { path: "numberInStock", label: "Stock" },
+  { path: "dailyRentalRate", label: "Rate" },
+  {
+    key: "like",
+    content: <Like liked={m.liked} handleLiked={() => handleLiked(m)} />
+  },
+  {
+    key: "delete",
+    content: (
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => {
+          handleDelete(m);
+        }}
+      >
+        Delete
+      </button>
+    )
+  }
+];
+129.get rid of the old <tbody/> markup in MoviesTable.jsx:
+<table className="table">
+  <TableHeader
+    columns={this.columns}
+    sortColumn={sortColumn}
+    handleSort={handleSort}
+  />
+  <TableBody data={movies} columns={this.columns} />
+</table>
+130.in the columns array, change the content attribute of like and delete from react
+elements to arrow functions and pass the handleLiked() and handleDelete() from this.props:
+{
+  key: "like",
+  content: m => (
+    <Like liked={m.liked} handleLiked={() => this.props.handleLiked(m)} />
+  )
+},
+{
+  key: "delete",
+  content: m => (
+    <button
+      className="btn btn-danger btn-sm"
+      onClick={() => {
+        this.props.handleDelete(m);
+      }}
+    >
+      Delete
+    </button>
+  )
+}
+131.create a new renderCell() to render <td/> with a content attribute or path:
+class TableBody extends Component {
+  renderCell = (i, c) => {
+    if (c.content) return c.content(i);
+    return _.get(i, c.path);
+  };
+132.call the renderCell in the <tr/>:
+<tr>
+  {columns.map(c => (
+    <td>{this.renderCell(i, c)}</td>
+  ))}
+</tr>
