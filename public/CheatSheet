@@ -1028,3 +1028,66 @@ renderSortIcon = column => {
 >
   {c.label} {this.renderSortIcon(c)}
 </th>
+140.create anew Table.jsx file in the common folder
+141.imr than sfc to create the frame of a functional component:
+import React from "react";
+
+const Table = props => {
+  return ();
+};
+
+export default Table;
+142.cut the code for the <table/> in MoviesTable.jsx and paste it in the return of
+the render() of Table.jsx:
+const Table = props => {
+  return (
+    <table className="table">
+      <TableHeader
+        columns={this.columns}
+        sortColumn={sortColumn}
+        handleSort={handleSort}
+      />
+      <TableBody data={movies} columns={this.columns} />
+    </table>
+  );
+};
+
+export default Table;
+143.use object destructuring to get the needed props and modify their reference:
+const Table = props => {
+  const { columns, sortColumn, handleSort, data } = props;
+  return (
+    <table className="table">
+      <TableHeader
+        columns={columns}
+        sortColumn={sortColumn}
+        handleSort={handleSort}
+      />
+      <TableBody data={data} columns={columns} />
+    </table>
+  );
+};
+144.import the table components that make up the <Table/> and remove their import 
+from MoviesTable.jsx where they are not needed anymore:
+import TableHeader from "./TableHeader";
+import TableBody from "./TableBody";
+145.import the new <Table/> component in MoviesTable since it will be needed toreplace the
+old <table/> markup in the render():
+import React, { Component } from "react";
+import Like from "./common/Like";
+import Table from "./common/Table";
+146.insert the <Table/> inside the render and assign it the appropriate props:
+render() {
+  const { movies, handleSort, sortColumn } = this.props;
+  return (
+    <>
+      <Table
+        data={movies}
+        handleSort={handleSort}
+        sortColumn={sortColumn}
+        columns={this.columns}
+      />
+    </>
+  );
+}
+
