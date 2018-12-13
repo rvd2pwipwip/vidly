@@ -967,3 +967,40 @@ class TableBody extends Component {
     <td>{this.renderCell(i, c)}</td>
   ))}
 </tr>
+133.in TableBody.jsx, give unique keys to the <tr/> and <td/> elements based on
+the id of their data:
+{data.map(i => (
+  <tr key={i._id}>
+    {columns.map(c => (
+      <td key={i._id + (c.path || c.key)}>{this.renderCell(i, c)}</td>
+    ))}
+  </tr>
+))}
+134.simplify the <td/> code by creating a createKey():
+createKey = (i, c) => {
+  return i._id + (c.path || c.key);
+};
+
+render() {
+  const { data, columns } = this.props;
+  return (
+    <tbody>
+      {data.map(i => (
+        <tr key={i._id}>
+          {columns.map(c => (
+            <td key={this.createKey(i, c)}>{this.renderCell(i, c)}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  );
+}
+135.handleDelete and handleLike are not needed in MoviesTable.jsx anymore:
+render() {
+  const {
+    movies,
+    // handleDelete,
+    // handleLiked,
+    handleSort,
+    sortColumn
+  } = this.props;

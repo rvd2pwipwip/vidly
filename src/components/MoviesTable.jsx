@@ -31,13 +31,7 @@ class MoviesTable extends Component {
   ];
 
   render() {
-    const {
-      movies,
-      handleDelete,
-      handleLiked,
-      handleSort,
-      sortColumn
-    } = this.props;
+    const { movies, handleSort, sortColumn } = this.props;
     return (
       <>
         <table className="table">
