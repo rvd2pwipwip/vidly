@@ -1004,3 +1004,27 @@ render() {
     handleSort,
     sortColumn
   } = this.props;
+136.in the <th/> of TableHeader.jsx, add a call to renderSortIcon(c) right after the column label:
+<th key={c.path || c.key} onClick={() => this.onSort(c.path)}>
+  {c.label} {this.renderSortIcon(c)}
+</th>
+137.the renderSortIcon should render the sort icon if the column.path is the same as the sortColumn.sort
+and then it should be ascending or descending, depending on the sortColumn order
+renderSortIcon = column => {
+  const { sortColumn } = this.props;
+  if (column.path !== sortColumn.sort || !column.path) return null;
+  if (sortColumn.order === "asc") return <i className="fa fa-sort-asc" />;
+  return <i className="fa fa-sort-desc" />;
+};
+138.in index.css add a new css with a class selector of clickable that makes the cursor a pointer:
+.clickable {
+  cursor: pointer;
+}
+139.add the clickable class to the <th/> element in TableHeader.jsx:
+<th
+  key={c.path || c.key}
+  onClick={() => this.onSort(c.path)}
+  className="clickable"
+>
+  {c.label} {this.renderSortIcon(c)}
+</th>
