@@ -1090,4 +1090,66 @@ render() {
     </>
   );
 }
+147.in Movies.jsx, cut the code for the filtering and the sorting of the movies to extract this to a new method
+148.paste the code in a new getPagedData() and make it return an object with the count of moviesand the movies themselves:
+getPagedData = () => {
+  const filteredMovies =
+    selectedGenre && selectedGenre._id
+      ? allMovies.filter(m => m.genre._id === selectedGenre._id)
+      : allMovies;
 
+  const sorted = _.orderBy(
+    filteredMovies,
+    [sortColumn.sort],
+    [sortColumn.order]
+  );
+
+  const movies = paginate(sorted, currentPage, pageSize);
+
+  return {totalCount: filteredMovies.length, data: movies}
+}
+149.call the getPagedData just before the return() and destructure the result:
+const { totalCount, data: movies } = this.getPagedData();
+
+return (
+...
+150.in the return() of Movies.jsx, replace the references to filteredMovies.length with
+references to totalCount:
+<p>Showing {totalCount} movies in the database.</p>
+...
+<Pagination
+  itemsCount={totalCount}
+151.use object destructuring in the getPagedData() to pass the needed data to its code:
+getPagedData = () => {
+  const {
+    pageSize,
+    currentPage,
+    movies: allMovies,
+    selectedGenre,
+    sortColumn
+  } = this.state;
+152.get rid of the unnecessary const in the render():
+render() {
+  const { length: count } = this.state.movies;
+  const { pageSize, currentPage } = this.state;
+153.in Table.jsx, destructure the props argument to get rid of the destructuring line:
+const Table = ({ columns, sortColumn, handleSort, data }) => {
+  return (
+...
+154.do the same for all sfc's (FilterGroup, Like and Pagination) in the common folder:
+const FilterGroup = ({
+  items,
+  textProperty,
+  valueProperty,
+  handleItemSelect,
+  selectedItem
+}) => {
+
+const Like = ({ liked, handleLiked }) 
+
+const Pagination = ({
+  itemsCount,
+  pageSize,
+  handlePageChange,
+  currentPage
+}) => {
