@@ -1153,3 +1153,121 @@ const Pagination = ({
   handlePageChange,
   currentPage
 }) => {
+/////////////// Exercises NavBar and Routing ///////////////
+155.import the react-router-dom module in the project:
+npm i react-router-dom
+156.import the react-router-dom BrowserRouter into index.js:
+import { BrowserRouter } from "react-router-dom";
+157.wrap the <App/> component inside a <BrowserRouter/> (the BrowserRouter will pass the 
+browser history, location and match props to <App/> and all its children components):
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+158.create new sfc files for Customers, MovieForm, NotFound and Rentals in the component folder
+159.in App.jsx, import then add the <NavBar/> on top of the page:
+import React, { Component } from "react";
+import Movies from "./Movies";
+import NavBar from "./common/NavBar";
+
+class App extends Component {
+  render() {
+    return (
+      <>
+        <NavBar />
+        <main className="container">
+          <Movies />
+        </main>
+      </>
+    );
+  }
+}
+
+export default App;
+160.import Route from react-router-dom:
+import React, { Component } from "react";
+import { Route } from "react-router-dom";
+import Movies from "./Movies";
+import NavBar from "./common/NavBar";
+161.import the 4 new components:
+import React, { Component } from "react";
+import { Route } from "react-router-dom";
+import Movies from "./Movies";
+import NavBar from "./common/NavBar";
+import Customers from "./Customers";
+import MovieForm from "./MovieForm";
+import NotFound from "./NotFound";
+import Rentals from "./Rentals";
+162.create 4 route components inside <main/> by typing emmet shortcut Route[path][component]*4
+and enter the paths and components attributes for the 4 new components:
+<main className="container">
+  <Route path="/movies" component={Movies} />
+  <Route path="/customers" component={Customers} />
+  <Route path="/rentals" component={Rentals} />
+  <Route path="/not-found" component={NotFound} />
+</main>
+163.test the app by entering the created route paths in the browser address bar
+i.e. http://localhost:3001/movies
+164.import Redirect from react-router-dom:
+import { Route, Redirect } from "react-router-dom";
+165.use Redirect to redirect from root ('/') to /movies:
+<main className="container">
+  <Route path="/movies" component={Movies} />
+  <Route path="/customers" component={Customers} />
+  <Route path="/rentals" component={Rentals} />
+  <Route path="/not-found" component={NotFound} />
+  <Redirect from="/" to="/movies" />
+</main>
+166.import Switch from rreact-router-dom:
+import { Route, Redirect, Switch } from "react-router-dom";
+167.wrap the routes in a <Switch/> to avoid rerouting every time with <Redirect/>:
+<main className="container">
+  <Switch>
+    <Route path="/movies" component={Movies} />
+    <Route path="/customers" component={Customers} />
+    <Route path="/rentals" component={Rentals} />
+    <Route path="/not-found" component={NotFound} />
+    <Redirect from="/" to="/movies" />
+  </Switch>
+</main>
+168.add Redirect for unexisting paths and add exact attribute to root redirect to avoid
+a match (with all urls's starting with '/') when the path doesn't exist:
+<Switch>
+  <Route path="/movies" component={Movies} />
+  <Route path="/customers" component={Customers} />
+  <Route path="/rentals" component={Rentals} />
+  <Route path="/not-found" component={NotFound} />
+  <Redirect exact from="/" to="/movies" />
+  <Redirect to="/not-found" />
+</Switch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+158.create a new NavBar.jsx file in the common folder that will render a <nav/> with
+Bootstrap navbar classes (https://getbootstrap.com/docs/4.1/components/navbar/):
+import React, { Component } from "react";
+
+class NavBar extends Component {
+  state = {};
+  render() {
+    return (
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">Vidly</nav>
+    );
+  }
+}
+
+export default NavBar;
+
