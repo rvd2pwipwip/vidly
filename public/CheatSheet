@@ -1242,32 +1242,139 @@ a match (with all urls's starting with '/') when the path doesn't exist:
   <Redirect exact from="/" to="/movies" />
   <Redirect to="/not-found" />
 </Switch>
+169.create a new NavBar.jsx file in the common folder with a sfc that will render a <nav/> 
+with Bootstrap navbar classes (https://getbootstrap.com/docs/4.1/components/navbar/):
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-158.create a new NavBar.jsx file in the common folder that will render a <nav/> with
-Bootstrap navbar classes (https://getbootstrap.com/docs/4.1/components/navbar/):
-import React, { Component } from "react";
-
-class NavBar extends Component {
-  state = {};
-  render() {
-    return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">Vidly</nav>
-    );
-  }
-}
+const NavBar = () => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <Link className="navbar-brand" to="#">
+        Vidly
+      </Link>
+      <button
+        className="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span className="navbar-toggler-icon" />
+      </button>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav">
+          <li className="nav-item active">
+            <NavLink className="nav-link" to="#">
+              Home <span className="sr-only">(current)</span>
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="#">
+              Features
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="#">
+              Pricing
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link disabled" to="#">
+              Disabled
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+};
 
 export default NavBar;
+170.adjust the paths (and remove the active class from Home):
+<nav className="navbar navbar-expand-lg navbar-light bg-light">
+  <Link className="navbar-brand" to="/">
+    Vidly
+  </Link>
+  <button
+    className="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarNav"
+    aria-controls="navbarNav"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span className="navbar-toggler-icon" />
+  </button>
+  <div className="collapse navbar-collapse" id="navbarNav">
+    <ul className="navbar-nav">
+      <li className="nav-item">
+        <NavLink className="nav-link" to="/movies">
+          Movies
+        </NavLink>
+      </li>
+      <li className="nav-item">
+        <NavLink className="nav-link" to="/customers">
+          Customers
+        </NavLink>
+      </li>
+      <li className="nav-item">
+        <NavLink className="nav-link" to="/rentals">
+          Rentals
+        </NavLink>
+      </li>
+    </ul>
+  </div>
+</nav>
+171.in App.jsx, import then insert the <NavBar/> just before the <main/>:
+return (
+  <>
+    <NavBar />
+    <main className="container">
+      <Switch>
+        <Route path="/movies" component={Movies} />
+        <Route path="/customers" component={Customers} />
+        <Route path="/rentals" component={Rentals} />
+        <Route path="/not-found" component={NotFound} />
+        <Redirect exact from="/" to="/movies" />
+        <Redirect to="/not-found" />
+      </Switch>
+    </main>
+  </>
+);
+172.in index.css, add bottom margin to the navbar class:
+.navbar {
+  margin-bottom: 1rem;
+}
+173.in MoviesTable.jsx, modify the first column of the table to update the browser path 
+and display a <Link/> with the movie title for each movie:
+{
+  path: "title",
+  label: "Title",
+  content: m => <Link to={`/movies/${m._id}`}>{m.title}</Link>
+},
+174.in App.jsx, register a new route for the MovieForm path just above the <Movies/> path:
+<Switch>
+  <Route path="/movies/:id" component={MovieForm} />
+  <Route path="/movies" component={Movies} />
+  ...
+175.in MovieForm.jsx, extract the movie id from the url and display it along with a 
+save button that brings the users back to the movies page by pushing the '/movies'
+path to the props.history:
+const MovieForm = ({ match, history }) => {
+  return (
+    <>
+      <h1>Movie Form {match.params.id}</h1>
+      <button
+        className="btn btn-primary"
+        onClick={() => history.push("/movies")}
+      >
+        Save
+      </button>
+    </>
+  );
+};
 
