@@ -1377,4 +1377,88 @@ const MovieForm = ({ match, history }) => {
     </>
   );
 };
+/////////////////  Forms  ////////////////////
+176.create a new LoginForm.jsx file with a cc in the components folder:
+import React, { Component } from "react";
 
+class LoginForm extends Component {
+  state = {};
+  render() {
+    return <h1>Login</h1>;
+  }
+}
+
+export default LoginForm;
+177.import Login then register a new login route in App.jsx:
+import LoginForm from "./LoginForm";
+...
+<Route path="/login" component={LoginForm} />
+178.add a link to login in the navigation bar:
+<li className="nav-item">
+  <NavLink className="nav-link" to="/login">
+    Login
+  </NavLink>
+</li>
+179.in LoginForm.jsx, enter the markup for the login form in the render():
+class LoginForm extends Component {
+  state = {};
+  render() {
+    return (
+      <>
+        <h1>Login</h1>
+        <form>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input id="username" type="text" className="form-control" />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input id="password" type="text" className="form-control" />
+          </div>
+          <button className="btn btn-primary">Login</button>
+        </form>
+      </>
+    );
+  }
+}
+180.prevent default form submit behavior (server round-trip) with a handleSubmit:
+class LoginForm extends Component {
+  handleSubmit = e => {
+    e.preventDefault();
+  };
+
+  render() {
+    return (
+      <>
+        <h1>Login</h1>
+        <form onSubmit={this.handleSubmit}>
+...
+181.get access to the username <input/> DOM element with a ref:
+class LoginForm extends Component {
+  usernameInput = React.createRef();
+
+  handleSubmit = e => {
+    e.preventDefault();
+    console.log("Logging in", this.usernameInput.current.value);
+  };
+
+  render() {
+    return (
+      <>
+        <h1>Login</h1>
+        <form onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              className="form-control"
+              required
+              ref={this.usernameInput}
+            />
+...
+182.add a componentDidMount to acces and focus the username input:
+componentDidMount() {
+  this.usernameInput.current.focus();
+}
+183.or do it with autofcous ;)
