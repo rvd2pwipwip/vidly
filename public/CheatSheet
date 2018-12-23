@@ -1462,3 +1462,63 @@ componentDidMount() {
   this.usernameInput.current.focus();
 }
 183.or do it with autofcous ;)
+184.create a new input.jsx file in the common folder:
+import React from "react";
+
+const Input = ({ name, label, value, onChange }) => {
+  return (
+    <div className="form-group">
+      <label htmlFor={name}>{label}</label>
+      <input
+        autoFocus={name === "username" ? true : false}
+        name={name}
+        value={value}
+        onChange={onChange}
+        id={name}
+        type={name === "password" ? "password" : "text"}
+        className="form-control"
+        required
+      />
+    </div>
+  );
+};
+
+export default Input;
+185.in LoginForm.jsx, import Input then replace the username and password 
+inputs markup with the new <Input/> and add the corresponding needed props:
+import Input from "./common/Input";
+...
+<form onSubmit={this.handleSubmit}>
+  <Input
+    name="username"
+    value={account.username}
+    label="Username"
+    onChange={this.handleChange}
+  />
+  <Input
+    name="password"
+    value={account.password}
+    label="Password"
+    onChange={this.handleChange}
+  />
+  <button className="btn btn-primary">Login</button>
+</form>
+186.add an errors empty object to the LoginForm state:
+state = {
+  account: { username: "", password: "" },
+  errors: {}
+};
+187.in the handleSubmit(), call a validate() that will update errors of state:
+handleSubmit = e => {
+  e.preventDefault();
+
+  const errors = this.validate();
+  this.setState({ errors });
+  if (errors) return;
+
+  console.log("Submitted");
+};
+188.create the validate method:
+validate = () => {
+  return { username: "Username is required." };
+};

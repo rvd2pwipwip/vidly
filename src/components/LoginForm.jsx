@@ -1,17 +1,24 @@
 import React, { Component } from "react";
+import Input from "./common/Input";
 
 class LoginForm extends Component {
   state = {
-    account: { username: "", password: "" }
+    account: { username: "", password: "" },
+    errors: {}
   };
-  usernameInput = React.createRef();
 
-  // componentDidMount() {
-  //   this.usernameInput.current.focus();
-  // }
+  validate = () => {
+    return { username: "Username is required." };
+  };
 
   handleSubmit = e => {
     e.preventDefault();
+
+    const errors = this.validate();
+    this.setState({ errors });
+    if (errors) return;
+
+    console.log("Submitted");
   };
 
   handleChange = ({ currentTarget: input }) => {
@@ -29,32 +36,18 @@ class LoginForm extends Component {
       <>
         <h1>Login</h1>
         <form onSubmit={this.handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input
-              autoFocus
-              name="username"
-              value={account.username}
-              onChange={this.handleChange}
-              id="username"
-              type="text"
-              className="form-control"
-              required
-              ref={this.usernameInput}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              name="password"
-              value={account.password}
-              onChange={this.handleChange}
-              id="password"
-              type="password"
-              className="form-control"
-              required
-            />
-          </div>
+          <Input
+            name="username"
+            value={account.username}
+            label="Username"
+            onChange={this.handleChange}
+          />
+          <Input
+            name="password"
+            value={account.password}
+            label="Password"
+            onChange={this.handleChange}
+          />
           <button className="btn btn-primary">Login</button>
         </form>
       </>
