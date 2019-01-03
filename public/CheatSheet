@@ -1522,3 +1522,79 @@ handleSubmit = e => {
 validate = () => {
   return { username: "Username is required." };
 };
+189.create basic validation by initializung an errors object in the validate =>:
+const errors = {};
+190.write validation logic for each input field:
+if (account.username.trim() === "")
+  errors.username = "Username is required.";
+
+if (account.password.trim() === "")
+  errors.password = "Password is required.";
+191.finally, if any key was created in errors{}. return the errors object:
+validate = () => {
+  const errors = {};
+
+  const { account } = this.state;
+  if (account.username.trim() === "")
+    errors.username = "Username is required.";
+
+  if (account.password.trim() === "")
+    errors.password = "Password is required.";
+
+  return Object.keys(errors).length === 0 ? null : errors;
+};
+192.console.log errors just after calling this.validate() in the handleSubmit:
+handleSubmit = e => {
+  e.preventDefault();
+
+  const errors = this.validate();
+  console.log(errors);
+  ...
+193.in Input.jsx, just after the <input/>, add a div with the bootstrap 
+classes alert and alert-danger:
+<div className="alert alert-danger"></div>
+194.get the error prop in the Input arguments:
+const Input = ({ name, label, value, error, onChange }) => {
+195.and render it in the new div:
+<div className="alert alert-danger">{error}</div>
+196.put the new div in an expression and prefix it with error && to
+render the alert div only if there is something in error:
+{error && <div className="alert alert-danger">{error}</div>}
+197.in LoginForm.jsx, use object destructuring to get the errors object and set it
+to the error prop of both <Input/> elements:
+render() {
+  const { account, errors } = this.state;
+  return (
+    <>
+      <h1>Login</h1>
+      <form onSubmit={this.handleSubmit}>
+        <Input
+          name="username"
+          value={account.username}
+          label="Username"
+          onChange={this.handleChange}
+          error={errors.username}
+        />
+        <Input
+          name="password"
+          value={account.password}
+          label="Password"
+          onChange={this.handleChange}
+          error={errors.password}
+        />
+        <button className="btn btn-primary">Login</button>
+      </form>
+    </>
+  );
+}
+198.in the hadleSubmit =>, set the state of errors to errors or empty object
+(and get rid of unnecessary console.log):
+handleSubmit = e => {
+  e.preventDefault();
+
+  const errors = this.validate();
+  this.setState({ errors: errors || {} });
+  if (errors) return;
+
+  console.log("Submitted");
+};
