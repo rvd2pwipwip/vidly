@@ -1598,3 +1598,40 @@ handleSubmit = e => {
 
   console.log("Submitted");
 };
+199.to validate on change, create a new errorMessage const in handleChange and assign it 
+the return value of a new (to be defined) validateProperty:
+const errorMessage = this.validateProperty(input);
+200.clone erros of the state of <LoginForm/>:
+const errors = { ...this.state.errors };
+201.if the error message is truthy, store it in the corresponding input value of errors:
+if (errorMessage) errors[input.name] = errorMessage;
+202.otherwise, there is no error so delete the corresponding input value of tnis.state.errors:
+else delete errors[input.name];
+203.also pass the updated errors when calling setState:
+this.setState({ account, errors });
+204. the final handleChange:
+handleChange = ({ currentTarget: input }) => {
+  const errors = { ...this.state.errors };
+  const errorMessage = this.validateProperty(input);
+
+  if (errorMessage) errors[input.name] = errorMessage;
+  else delete errors[input.name];
+  //copy state
+  const account = { ...this.state.account };
+  //update username
+  account[input.name] = input.value;
+  //update state
+  this.setState({ account, errors });
+};
+205.implement a temporary validateProperty:
+validateProperty = ({ name, value }) => {
+  //desrtuctured input.name and input.value
+  if (name === "username") {
+    if (value.trim() === "") return "Username is required";
+    // ...
+  }
+  if (name === "password") {
+    if (value.trim() === "") return "Password is required";
+    // ...
+  }
+};
