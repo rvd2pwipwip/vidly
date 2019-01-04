@@ -1635,3 +1635,91 @@ validateProperty = ({ name, value }) => {
     // ...
   }
 };
+206.use joi third party library to validate:
+https://www.npmjs.com/package/joi
+207.npm install joi in the project:
+npm i joi-browser
+208.import joi in LoginForm.jsx:
+import React, { Component } from "react";
+import Joi from "joi-browser";
+import Input from "./common/Input";
+209.define a schema to use for joi:
+schema = {
+  username: Joi.string().required(),
+  password: Joi.string().required()
+};
+210.in the validate =>, assign the result of the schema validation and console.log it:
+const result = Joi.validate(this.state.account, this.schema);
+console.log(result);
+211.set abortEarly to false in the Joi validate result args:
+const result = Joi.validate(this.state.account, this.schema, {
+  abortEarly: false
+});
+console.log(result);
+212.in the browser, click the login button to view the joi result in the console:
+{error: Error: child "username" fails because ["username" is not allowed to be empty]. child "password" fail…, value: {…}, then: ƒ, catch: ƒ}catch: ƒ _catch(reject)error: Error: child "username" fails because ["username" is not allowed to be empty]. child "password" fails because ["password" is not allowed to be empty]
+213.convert complex joi error description structure and convert it to a simplified version
+that our app understands (map to state.errors {} where key is target field and value is message)
+214.only keep the result definition in the validate =>:
+validate = () => {
+  //validate entire form
+
+  const result = Joi.validate(this.state.account, this.schema, {
+    abortEarly: false
+  });
+};
+215.if error of result is falsy, return null:
+if (!result.error) return null;
+216.otherwise, take the result object and map it to our errors state object:
+for (let item of result.error.details) {
+  errors[item.path[0]] = item.message;
+}
+217.finally, return the errors object:
+validate = () => {
+  //validate entire form
+
+  const result = Joi.validate(this.state.account, this.schema, {
+    abortEarly: false
+  });
+  if (!result.error) return null;
+  const errors = {};
+  for (let item of result.error.details) {
+    errors[item.path[0]] = item.message;
+  }
+  return errors;
+};
+218.test the app then correct the schema to get proper capitalization of the error strings:
+schema = {
+  username: Joi.string()
+    .required()
+    .label("Username"),
+  password: Joi.string()
+    .required()
+    .label("Password")
+};
+219.improve the validate code with object destructuring:
+validate = () => {
+    //validate entire form
+
+  const { error } = Joi.validate(this.state.account, this.schema, {
+    abortEarly: false
+  });
+  if (!error) return null;
+  const errors = {};
+  for (let item of error.details) {
+    errors[item.path[0]] = item.message;
+  }
+  return errors;
+};
+220.create a const for the 3rd arg:
+validate = () => {
+  //validate entire form
+  const options = { abortEarly: false };
+  const { error } = Joi.validate(this.state.account, this.schema, options);
+  if (!error) return null;
+  const errors = {};
+  for (let item of error.details) {
+    errors[item.path[0]] = item.message;
+  }
+  return errors;
+};

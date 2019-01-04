@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Joi from "joi-browser";
 import Input from "./common/Input";
 
 class LoginForm extends Component {
@@ -7,20 +8,29 @@ class LoginForm extends Component {
     errors: {}
   };
 
+  schema = {
+    username: Joi.string()
+      .required()
+      .label("Username"),
+    password: Joi.string()
+      .required()
+      .label("Password")
+  };
+
   validate = () => {
+    //validate entire form
+    const options = { abortEarly: false };
+    const { error } = Joi.validate(this.state.account, this.schema, options);
+    if (!error) return null;
     const errors = {};
-
-    const { account } = this.state;
-    if (account.username.trim() === "")
-      errors.username = "Username is required.";
-
-    if (account.password.trim() === "")
-      errors.password = "Password is required.";
-
-    return Object.keys(errors).length === 0 ? null : errors;
+    for (let item of error.details) {
+      errors[item.path[0]] = item.message;
+    }
+    return errors;
   };
 
   handleSubmit = e => {
+    //validate entire form
     e.preventDefault();
 
     const errors = this.validate();
@@ -31,6 +41,7 @@ class LoginForm extends Component {
   };
 
   validateProperty = ({ name, value }) => {
+    //validate each input
     //desrtuctured input.name and input.value
     if (name === "username") {
       if (value.trim() === "") return "Username is required";
@@ -44,7 +55,7 @@ class LoginForm extends Component {
 
   handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
-    const errorMessage = this.validateProperty(input);
+    const errorMessage = this.validateProperty(input); //pass which input to validate
 
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
@@ -52,7 +63,7 @@ class LoginForm extends Component {
     const account = { ...this.state.account };
     //update username
     account[input.name] = input.value;
-    //update state
+    //update state of both account and errors
     this.setState({ account, errors });
   };
 
