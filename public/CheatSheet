@@ -1723,3 +1723,28 @@ validate = () => {
   }
   return errors;
 };
+221.delete the if statements in validateProperty than call Joi.validate with one input field
+as the first argument (not entire form), a sub-schema (not entire form) as the second argument...
+222.in validateProperty, create an object with a single property that should be dynamically set to
+the passed name (using computed property name):
+validateProperty = ({ name, value }) => {
+  const obj = { [name]: value };
+};
+223.define a new const set to a new object containing the schema for the [name] obj only:
+const schema = { [name]: this.schema[name] };
+224.pick the error property and assign it the result of the Joi call:
+const { error } = Joi.validate(obj, schema);
+225.return the error message if there is one, or return null:
+return error ? error.details[0].message : null;
+226.test the app now that it can validate each input with this validateProperty:
+validateProperty = ({ name, value }) => {
+  const obj = { [name]: value };
+  const schema = { [name]: this.schema[name] };
+  const { error } = Joi.validate(obj, schema);
+  return error ? error.details[0].message : null;
+};
+227.in LoginForm, set the disabled property of the button element to an immediate call to
+this.validate; the call either returns null (falsy) or an object (truthy):
+<button disabled={this.validate()} className="btn btn-primary">
+  Login
+</button>
