@@ -1748,3 +1748,104 @@ this.validate; the call either returns null (falsy) or an object (truthy):
 <button disabled={this.validate()} className="btn btn-primary">
   Login
 </button>
+228.in LoginForm.jsx, rename state account to data to begin extracting a reusable form
+(find/replace all account with data)
+229.in the common folder, create a new <Form/> component in which all reusable code 
+can be copied (LoginForm will extend that new component instead of React's Component class)
+230.initialize the state of Form with data and errors, both assigned to an empty object:
+class Form extends Component {
+  state = { 
+    data: {},
+    errors: {}
+   }
+   
+  render() { 
+    return (  );
+  }
+}
+231.in LoginForm.jsx, leave the schema (login form specific) but cut the validate and
+validateProperty code to paste it into Form (also import Joi, needed in validate
+and get rid of render method in Form):
+import React, { Component } from "react";
+import { Joi } from "joi-browser";
+
+class Form extends Component {
+  state = {
+    data: {},
+    errors: {}
+  };
+
+  validate = () => {
+    //validate entire form
+    const options = { abortEarly: false };
+    const { error } = Joi.validate(this.state.data, this.schema, options);
+    if (!error) return null;
+    const errors = {};
+    for (let item of error.details) {
+      errors[item.path[0]] = item.message;
+    }
+    return errors;
+  };
+
+  validateProperty = ({ name, value }) => {
+    //validate each input
+    //destructured input.name and input.value
+    const obj = { [name]: value };
+    const schema = { [name]: this.schema[name] };
+    const { error } = Joi.validate(obj, schema);
+    return error ? error.details[0].message : null;
+  };
+}
+
+export default Form;
+232.in LoginForm.jsx, refactor handleSubmit to exctract reusable e.preventDefault but
+leave the rest (form specific onClick behavior):
+handleSubmit = e => {
+  //validate entire form
+  e.preventDefault();
+
+  const errors = this.validate();
+  this.setState({ errors: errors || {} });
+  if (errors) return;
+
+  this.doSubmit();
+};
+
+doSubmit = () => {
+  // Call the server
+  console.log("Submitted");
+};
+233.now that handleSubmit is generic and reusable, cut and paste its code into Form.jsx,
+just below validateProperty:
+validateProperty = ({ name, value }) => {
+  //validate each input
+  //destructured input.name and input.value
+  const obj = { [name]: value };
+  const schema = { [name]: this.schema[name] };
+  const { error } = Joi.validate(obj, schema);
+  return error ? error.details[0].message : null;
+};
+
+handleSubmit = e => {
+  //validate entire form
+  e.preventDefault();
+
+  const errors = this.validate();
+  this.setState({ errors: errors || {} });
+  if (errors) return;
+
+  this.doSubmit();
+};
+234.cut the reusable code of handleChange in LoginForm to paste it in Form, below handleSubmit.
+235.now that reusable code was split from specific code, make LoginForm class extend Form:
+import React, { Component } from "react";
+import Joi from "joi-browser";
+import Input from "./common/Input";
+import Form from "./common/Form";
+
+class LoginForm extends Form {
+  state = {
+    data: { username: "", password: "" },
+    errors: {}
+  };
+...
