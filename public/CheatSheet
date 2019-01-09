@@ -1849,3 +1849,108 @@ class LoginForm extends Form {
     errors: {}
   };
 ...
+236.cut the <button/> markup from LoginForm and paste it into a new renderButton method
+that takes a label parameter in Form:
+renderButton = label => {
+  return (
+    <button disabled={this.validate()} className="btn btn-primary">
+      {label}
+    </button>
+  );
+};
+237.back to LoginForm, call the new renderButton('Login'):
+{this.renderButton("Login")}
+238.the <Input/> components have repetitive code and need to be extracted like the
+<button/>; cut the <Input/> markup from LoginForm and paste it into a new renderInput 
+method that takes a label parameter in Form:
+renderInput = (name, label) => {
+  return (
+    <Input
+      name={name}
+      value={data[name]}
+      label={label}
+      onChange={this.handleChange}
+      error={errors[name]}
+    />
+  );
+};
+239.import the Input component in the Form and remove is import from LoginForm:
+import Input from "./Input";
+240.in LoginForm, call the new renderInput with the proper arguments for username and password:
+<form onSubmit={this.handleSubmit}>
+  {this.renderInput("username", "Username")}
+  {this.renderInput("password", "Password")}
+  {this.renderButton("Login")}
+</form>
+241.in LoginForm, cut the initialization code of data and errors and paste it in
+Form.jsx where renderInput needs it:
+renderInput = (name, label) => {
+  const { data, errors } = this.state;
+  return (
+    <Input
+      name={name}
+      value={data[name]}
+      label={label}
+      onChange={this.handleChange}
+      error={errors[name]}
+    />
+  );
+};
+242.add a type parameter with a default value of "text" to the renderInput():
+renderInput = (name, label, type = "text") => {
+243.in LoginForm, add the "password" value as the third argument of the renderInput() for password:
+{this.renderInput("password", "Password", "password")}
+244.in Input.jsx, add type as a picked property of Input and assign it to the type attribute:
+const Input = ({ name, label, value, error, onChange, type }) => {
+  return (
+    <div className="form-group">
+      <label htmlFor={name}>{label}</label>
+      <input
+        autoFocus={name === "username" ? true : false}
+        name={name}
+        value={value}
+        onChange={onChange}
+        id={name}
+        type={type}
+        className="form-control"
+      />
+      {error && <div className="alert alert-danger">{error}</div>}
+    </div>
+  );
+};
+245.group together all the <input/> attributes that have the same value as their name:
+<input
+  name={name}
+  value={value}
+  onChange={onChange}
+  type={type}
+  id={name}
+  className="form-control"
+  autoFocus={name === "username" ? true : false}
+/>
+246.pass these attributes with the ...rest operator:
+const Input = ({ name, label, error, ...rest }) => {
+247.automatically assign value, onChange and type with the spread operator:
+<input
+  {...rest}
+  name={name}
+  id={name}
+  className="form-control"
+  autoFocus={name === "username" ? true : false}
+/>
+248.the code below is equivalent to the code at 244:
+const Input = ({ name, label, error, ...rest }) => {
+  return (
+    <div className="form-group">
+      <label htmlFor={name}>{label}</label>
+      <input
+        {...rest}
+        name={name}
+        id={name}
+        className="form-control"
+        autoFocus={name === "username" ? true : false}
+      />
+      {error && <div className="alert alert-danger">{error}</div>}
+    </div>
+  );
+};
