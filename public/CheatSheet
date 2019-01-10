@@ -1954,3 +1954,5 @@ const Input = ({ name, label, error, ...rest }) => {
     </div>
   );
 };
+249.video 20 is an exercise to add a Register form that is very similar to the Login form.
+
