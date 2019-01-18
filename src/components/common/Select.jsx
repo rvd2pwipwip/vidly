@@ -1,14 +1,21 @@
 import React from "react";
 
-const Input = ({ name, label, error, ...rest }) => {
+const Select = ({ name, label, options, error, ...rest }) => {
   console.log(rest);
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
-      <input {...rest} name={name} id={name} className="form-control" />
+      <select {...rest} name={name} id={name} className="form-control">
+        <option value="" />
+        {options.map(option => (
+          <option key={option._id} value={option._id}>
+            {option.name}
+          </option>
+        ))}
+      </select>
       {error && <div className="alert alert-danger">{error}</div>}
     </div>
   );
 };
 
-export default Input;
+export default Select;
